@@ -22,7 +22,8 @@ media
 
 # C extensions
 *.so
-
+/client/node_module
+/server/env
 # Distribution / packaging
 .Python
 build/

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,23 +25,29 @@ SECRET_KEY = 'django-insecure-tcug*fd-@wdhz^sw_8z*=u#-87!jy1umtjbu^xlin2^rrk2@3f
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CORS_ORIGIN_ALLOW_ALL = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS=['*']
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    'http://192.168.0.102:8080/',
+]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+AUTH_USER_MODEL = 'user.MyUser'
 
-MEDIA_ROOT = PROJECT_DIR / 'media'
-MEDIA_URL = 'media/'
-STATIC_ROOT = PROJECT_DIR / 'static'
-STATIC_URL = 'static/'
+STATIC_ROOT = 'static'
+STATIC_URLS = 'static/'
+MEDIA_URLS = 'media'
+MEDIA_URL = 'http://127.0.0.1:8000/'
 
 # Application definition
-
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+}
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,19 +55,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'django_filters',
-    'corsheaders',
     'drf_yasg',
 
-    'produce.apps.ProduceConfig'
-
+    'produce.apps.ProduceConfig',
+    'user.apps.UserConfig'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

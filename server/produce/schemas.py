@@ -14,3 +14,27 @@ class ProduceListSchema(AutoSchema):
                 schema=coreschema.Integer(description='Параметр фильтрации')
             ),
         ]
+
+
+class DeleteSchema(AutoSchema):
+    def get_serializer_fields(self, path, method):
+        return [
+            coreapi.Field(
+                name='id',
+                location='form',
+                required=True,
+                schema=coreschema.String(description='id удаляемого обьекта')
+            )
+        ]
+
+
+class PaySchema(AutoSchema):
+    def get_serializer_fields(self, path, method):
+        return [
+            coreapi.Field(
+                name='id',
+                location='form',
+                required=True,
+                schema=coreschema.String(description='id заказа')
+            )
+        ]

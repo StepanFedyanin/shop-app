@@ -1,0 +1,18 @@
+@mixin scrollbar($b, $c, $w, $h) {
+	& {
+		scrollbar-width: thin;
+		scrollbar-color: $c $b;
+	}
+	&::-webkit-scrollbar {
+		height: $h;
+		width: $w;
+	}
+	&::-webkit-scrollbar-track {
+		background: $b;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: $c;
+		border-radius: calc(($w - 2px) / 2);
+		border: calc($w / 5) solid $b;
+	}
+}

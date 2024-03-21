@@ -1,0 +1,65 @@
+{
+  "name": "shop-app",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "dev": "npx vue-cli-service build --mode development",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@splidejs/vue-splide": "^0.6.12",
+    "axios": "^1.4.0",
+    "bootstrap": "^5.2.3",
+    "bootstrap-vue-3": "^0.1.0",
+    "core-js": "^3.6.5",
+    "fecha": "^4.2.3",
+    "maska": "^2.1.10",
+    "sass": "^1.64.2",
+    "url-loader": "^4.1.1",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4",
+    "vue-template-compiler": "^2.7.14",
+    "vue-upload-component": "^3.0.50",
+    "vuex": "^4.1.0",
+    "vuex-persist": "^3.1.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.10",
+    "@babel/eslint-parser": "^7.22.10",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-plugin-router": "^5.0.8",
+    "@vue/cli-plugin-vuex": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "@vue/compiler-sfc": "^3.3.4",
+    "eslint": "^8.46.0",
+    "eslint-plugin-vue": "^9.17.0",
+    "file-loader": "^6.2.0",
+    "sass-loader": "^13.3.2",
+    "vue-loader": "^17.2.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {
+      "vue/no-v-text-v-html-on-component": "warn",
+      "vue/multi-word-component-names": "off"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

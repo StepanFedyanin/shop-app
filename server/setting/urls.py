@@ -21,11 +21,14 @@ from rest_framework.documentation import include_docs_urls
 from django.urls import path, include
 
 from setting import settings
+from user.views import MyTokenObtainPairView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include_docs_urls(title='API docs')),
     path('api/produce/', include('produce.urls', namespace='produce')),
+    path('api/user/', include('user.urls', namespace='user')),
+    path('api/token/create/', MyTokenObtainPairView.as_view(), name='token_auth'),
 ]
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URLS, document_root=settings.MEDIA_URLS)
+urlpatterns += static(settings.STATIC_URLS, document_root=settings.STATIC_ROOT)

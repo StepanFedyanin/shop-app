@@ -1,0 +1,30 @@
+.header{
+  display: flex;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  &__logo{
+    width: 75px;
+  }
+  &__container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__menu{
+    display: flex;
+    gap: 20px;
+    &--item{
+      color: #333333;
+      font-size: 1.3rem;
+      text-decoration: none;
+      transition: all .3s ease;
+      &:hover{
+        opacity: .5;
+      }
+      &.is-active{
+        color: var(--bs-warning);
+      }
+    }
+  }
+}
