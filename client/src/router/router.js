@@ -4,6 +4,7 @@ import store from '@/store/store'
 import auth from '@/views/auth.vue';
 import home from '@/views/home.vue';
 import item from "@/views/item.vue";
+import basket from "@/views/basket.vue";
 
 const routes = [
     {
@@ -36,13 +37,27 @@ const routes = [
         meta: { title: 'Продукт' },
         props: true
     },
-    // {
-    //     path: '/campaigns',
-    //     name: 'campaigns',
-    //     component: campaigns,
-    //     meta: { title: 'Мои кампании', requiresAuth: true },
-    //     props: true,
-    // },
+    {
+        path: '/auth',
+        name: 'auth',
+        component: auth,
+        meta: { title: 'Авторизация' },
+        props: true
+    },
+    {
+        path: '/basket',
+        name: 'basket',
+        component: basket,
+        meta: { title: 'Корзина', requiresAuth: true },
+        props: true
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: auth,
+        meta: { title: 'Регистрация' },
+        props: true
+    },
 ];
 
 const router = createRouter({
@@ -53,9 +68,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    document.title = to.meta.title + ' - L Radio Direct' || 'L Radio Direct';
+    document.title = to.meta.title;
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (store.state.user && store.state.user.id) {
+        if (store.state.access) {
             let jwt = helpers.parseJwt(store.state.access);
             let expDate = new Date(jwt.exp * 1000);
             if (expDate < new Date()) {

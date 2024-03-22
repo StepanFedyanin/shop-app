@@ -1,3 +1,4 @@
+from itertools import product
 
 from rest_framework import status
 from rest_framework.decorators import action
@@ -38,12 +39,19 @@ class ProduceViewSet(GenericViewSet):
         produce = get_object_or_404(queryset, pk=pk)
         serializer = ProductSerializer(produce)
         if user.is_authenticated:
-            print('123')
+            order = Order.objects.get_or_create(user=user, status=True)[0]
+            serializer_order = OrderSerializer(order).data
+            is_available = False
+            for pr in serializer_order['product']:
+                if pr['id'] == produce.id:
+                    is_available = True
+            data = serializer.data
+            data['available'] = is_available
+            return Response(data, status=status.HTTP_200_OK)
         else:
             data = serializer.data
             data['available'] = False
             return Response(data, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class OrderViewSet(GenericViewSet):

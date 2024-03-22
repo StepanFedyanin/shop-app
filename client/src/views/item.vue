@@ -1,18 +1,19 @@
 <template>
     <div class="product">
-        <div class="loader" v-if="productLoader">
-            <b-spinner v-show="productLoader"></b-spinner>
-        </div>
-        <div v-else>
+		<b-overlay
+			:show="productLoader"
+			no-wrap
+			spinner-variant="warning"
+		/>
+        <div>
             <div class="product__name">{{product.name}}</div>
             <div class="product__image">
                 <img :src="product.image" :alt="product.name">
             </div>
             <div class="product__price">{{product.price}} ₽</div>
             <div class="product__btn">
-                <div class="product__message" v-if="!user.id">Для начала авторизуйтесь</div>
-                <div class="product__message" v-if="product.available">Товар добавлен</div>
-                <b-button variant="warning" v-else-if="user.id">Добавить в корзину</b-button>
+				<b-button variant="warning" :disabled="!token" v-if="product.available" @click="removeOrder">Удалить из корзины</b-button>
+				<b-button variant="warning" :disabled="!token" v-else @click="addOrder">Добавить в корзину</b-button>
             </div>
             <div class="product__description">{{product.description}}</div>
         </div>
@@ -26,7 +27,7 @@ export default {
     name: 'item',
     data(){
         return{
-            user: this.$store.state.user,
+			token: this.$store.state.access,
             productLoader: false,
             product: {}
         }
@@ -39,6 +40,28 @@ export default {
         }).catch(()=>{
             this.productLoader = false;
         })
-    }
+    },
+	methods:{
+		addOrder(){
+			this.productLoader = true;
+			app.addOrder(this.product.id).then((res)=>{
+				this.productLoader = false;
+				this.product.available = true;
+				this.$store.dispatch('setOrder', res.product.length);
+			}).catch(()=>{
+				this.productLoader = false;
+			})
+		},
+		removeOrder(){
+			this.productLoader = true;
+			app.removeOrder({id:this.product.id}).then((res)=>{
+				this.productLoader = false;
+				this.product.available = false;
+				this.$store.dispatch('setOrder', res.product.length);
+			}).catch(()=>{
+				this.productLoader = false;
+			})
+		}
+	}
 }
 </script>

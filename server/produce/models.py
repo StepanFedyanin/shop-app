@@ -8,6 +8,10 @@ class Product(models.Model):
     image = models.ImageField(upload_to='media/product/%Y/%m')
     description = models.TextField('Описание')
 
+    class Meta:
+        verbose_name = 'Товары'
+        verbose_name_plural = 'Товары'
+
 
 class Order(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
@@ -19,3 +23,7 @@ class Order(models.Model):
         self.status = False
         self.save()
         return self
+
+    class Meta:
+        verbose_name = 'Заказы'
+        verbose_name_plural = 'Заказы'

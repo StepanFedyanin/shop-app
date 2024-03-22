@@ -14,6 +14,7 @@ const store = createStore({
         loader: null,
         access: null,
         refresh: null,
+        order: 0
     },
     plugins: [vuexPersist.plugin],
     mutations: {
@@ -23,6 +24,9 @@ const store = createStore({
         TOKENS(state, tokens) {
             state.access = tokens.access;
             state.refresh = tokens.refresh;
+        },
+        ORDER(state, data) {
+            state.order = data;
         },
     },
     actions: {
@@ -37,6 +41,9 @@ const store = createStore({
         },
         clearToken(context) {
             context.commit('TOKENS', {});
+        },
+        setOrder(context,data) {
+            context.commit('ORDER', data);
         },
     }
 });
