@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from produce.models import Product, Order
+from produce.models import Product, Order, ProductItem
 
 
 class ProductSerializer(ModelSerializer):
@@ -8,6 +8,22 @@ class ProductSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class ProductItemSerializer(ModelSerializer):
+    class Meta:
+        model = ProductItem
+        fields = ('id','product','quantity')
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['product'] = ProductSerializer(Product.objects.get(id=rep['product'])).data
+        return rep
+
+
+class ProductItemPostSerializer(ModelSerializer):
+    class Meta:
+        model = ProductItem
+        fields = '__all__'
+
 class OrderSerializer(ModelSerializer):
     class Meta:
         model = Order
@@ -15,5 +31,5 @@ class OrderSerializer(ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['product'] = ProductSerializer(instance.product.all(), many=True).data
+        rep['products'] = ProductItemSerializer(ProductItem.objects.filter(order=rep['id']), many=True).data
         return rep

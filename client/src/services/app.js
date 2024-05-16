@@ -82,13 +82,28 @@ export default class extends REST {
         });
     }
     
-    static addOrder(id){
-        return this._get(`produce/order/${id}`, {}).then((data) => {
+    static addOrder(data){
+        return this._post(`produce/order/add_item`, {}, data).then((data) => {
             return data;
         }).catch((error) => {
             throw new RESTError(error, 'Не удалось зарегистрироваться');
         });
     }
+    static removeItemOrder(data){
+        return this._post(`produce/order/remove`, {}, data).then((data) => {
+            return data;
+        }).catch((error) => {
+            throw new RESTError(error, 'Не удалось зарегистрироваться');
+        });
+    }
+    static remove_by_id_product(data){
+        return this._post(`produce/order/remove_by_id_product`, {}, data).then((data) => {
+            return data;
+        }).catch((error) => {
+            throw new RESTError(error, 'Не удалось зарегистрироваться');
+        });
+    }
+    
     static removeOrder(data){
         return this._post(`produce/order/remove`, {},data).then((data) => {
             return data;
@@ -104,5 +119,13 @@ export default class extends REST {
             throw new RESTError(error, 'Не удалось зарегистрироваться');
         });
     }
+    static changeProduct(data){
+        return this._post(`produce/order/change_item`, {},data).then((data) => {
+            return data;
+        }).catch((error) => {
+            throw new RESTError(error, 'Не удалось зарегистрироваться');
+        });
+    }
+    
     
 }

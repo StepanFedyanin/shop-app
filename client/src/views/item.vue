@@ -3,7 +3,7 @@
 		<b-overlay
 			:show="productLoader"
 			no-wrap
-			spinner-variant="warning"
+			spinner-variant="primary"
 		/>
         <div>
             <div class="product__name">{{product.name}}</div>

@@ -30,7 +30,7 @@
 						size="lg"
 					></b-form-input>
 				</b-form-group>
-				<b-button variant="warning" type="submit">
+				<b-button variant="primary" type="submit">
 					Войти
 				</b-button>
 				<RouterLink :to="{name:'register'}" class="auth__reg">
@@ -66,17 +66,17 @@
 						size="lg"
 					></b-form-input>
 				</b-form-group>
-				<b-button variant="warning" type="submit">
+				<b-button variant="primary" type="submit">
 					Зарегистрироваться
 				</b-button>
-				<RouterLink :to="{name:'register'}" class="auth__reg">
+				<RouterLink :to="{name:'auth'}" class="auth__reg">
 					Войти?
 				</RouterLink>
 			</b-form>
 			<b-overlay
 				:show="loader"
 				no-wrap
-				spinner-variant="warning"
+				spinner-variant="primary"
 			/>
 		</div>
 		

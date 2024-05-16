@@ -7,7 +7,7 @@
             <div class="header__menu">
                 <router-link v-for="item in menuList" class="header__menu--item" :key="item.link" :to="{name:item.link}">
                     {{item.name}}
-					<span v-if="item.link==='basket'" class="count">{{order}}</span>
+					<span v-if="item.link==='basket'" class="count" :class="order&&'m--active'"></span>
                 </router-link>
 				<div v-if="token" class="header__menu--item" @click="exit">Выйти</div>
             </div>
@@ -28,7 +28,8 @@ export default {
 			],
 			menu:[
                 {name: 'Каталог',link:'home'},
-				{name: 'Войти',link:'auth'}
+				{name: 'Войти',link:'auth'},
+				{name: 'Зарегестрироваться',link:'registration'}
 			]
         }
     },

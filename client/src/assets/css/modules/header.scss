@@ -34,25 +34,29 @@
       font-size: 1.3rem;
       text-decoration: none;
       transition: all .3s ease;
+      cursor: pointer;
       .count{
         position: absolute;
-        background: #333333;
-        width: 20px;
-        height: 20px;
+        width: 10px;
+        height: 10px;
         border-radius: 50%;
-        color:#FFFFFF;
+        background: transparent;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: auto;
-        top: -5px;
-        right: -10px;
+        top: 2px;
+        right: -7px;
+        transition: all .3s ease;
+        &.m--active{
+          background: var(--bs-primary);
+        }
       }
       &:hover{
         opacity: .5;
       }
       &.is-active{
-        color: var(--bs-warning);
+        color: var(--bs-primary);
       }
     }
   }

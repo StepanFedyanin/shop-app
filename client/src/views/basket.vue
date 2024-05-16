@@ -5,18 +5,18 @@
 			<b-overlay
 				:show="loader"
 				no-wrap
-				spinner-variant="warning"
+				spinner-variant="primary"
 			/>
 			<div class="catalog__list mb-4">
-				<template v-if="orders.product.length > 0">
-					<div v-for="item in orders.product" :key="`catalog_${item.id}`" class="basket__item">
+				<template v-if="orders.products?.length > 0">
+					<div v-for="item in orders.products" :key="`catalog_${item.id}`" class="basket__item">
 						<div class="catalog__image">
-							<img :src="item.image" :alt="item.name"/>
+							<img :src="item.product?.image" :alt="item.product?.name"/>
 						</div>
-						<div class="catalog__name">{{ item.name }}</div>
-						<div class="d-flex justify-content-between align-items-center px-2">
-							<div class="catalog__price">{{ item.price }} ₽</div>
-							<b-button variant="warning" @click="removeOrder(item.id)">
+						<div class="catalog__name">{{ item.product?.name }}</div>
+						<div class="d-flex justify-content-between align-items-center px-2 mt-3">
+							<div class="catalog__price">{{ item.quantity }} X {{ item.product?.price }} ₽</div>
+							<b-button variant="primary" @click="removeOrder(item.product?.id)">
 								Удалить
 							</b-button>
 						</div>
@@ -30,9 +30,36 @@
 				<span class="mb-5">
 									Сумма к оплате: {{ orders.price }} ₽
 				</span>
-				<b-button variant="warning" class="mb-3" @click="pay">
+				<b-form>
+					<b-form-group
+						id="input-group-email-reg"
+						label="Контактный телефон"
+						label-for="input-email-reg"
+					>
+						<b-form-input
+							id="input-email-reg"
+							v-model="phone"
+							type="text"
+							v-maska
+							required
+							placeholder="+7 XXX XXX-XX-XX"
+							data-maska="+7 ### ###-##-##"
+							size="lg"
+						></b-form-input>
+					</b-form-group>
+				</b-form>
+				
+				<b-button variant="primary" class="mb-3" @click="pay" :disabled="!orders.products?.length || phone.length !== 16">
 					Оформить заказ
 				</b-button>
+				<b-modal
+					v-model="showModal"
+					centered
+					hide-footer
+					title="Вы успешно оформили заказ!"
+					@hidden="hiddenModel">
+					С вами свяжутся в ближайщее время.
+				</b-modal>
 			</div>
 		</div>
 	</div>
@@ -48,7 +75,9 @@ export default {
 			orders: {
 				product: []
 			},
-			loader: false
+			loader: false,
+			phone: '',
+			showModal: false
 		}
 	},
 	created() {
@@ -66,21 +95,28 @@ export default {
 		},
 		removeOrder(id) {
 			this.loader = true;
-			app.removeOrder({id: id}).then((res) => {
+			app.remove_by_id_product({id: id}).then((res) => {
+				console.log(res.products)
+				if (res.products.length === 0) {
+					this.$store.dispatch('setOrder', false);
+				}
 				this.loader = false;
 				this.orders = res;
-				this.$store.dispatch('setOrder', res.product.length);
 			}).catch(() => {
 				this.loader = false;
 			})
 		},
+		hiddenModel(){
+			this.showModal = false
+		},
 		pay() {
 			this.loader = true;
-			app.pay(this.orders.id).then(() => {
+			app.pay({id: this.orders.id, phone: this.phone}).then(() => {
 				this.orders = {
 					product: []
 				};
 				this.loader = false;
+				this.showModal = true
 				this.$store.dispatch('setOrder', 0);
 			}).catch(() => {
 				this.loader = false;

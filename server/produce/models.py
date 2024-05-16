@@ -1,29 +1,84 @@
 from django.db import models
 from user.models import MyUser
 
-# Create your models here.
+
+class Services(models.Model):
+    name = models.CharField('Название услуги', max_length=255)
+    price = models.IntegerField('Цена')
+    image = models.ImageField(upload_to='media/services/%Y/%m')
+    description = models.TextField('Описание')
+    status = models.BooleanField('Отображать', default=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Услуги'
+        verbose_name_plural = 'Услуги'
+
+
 class Product(models.Model):
     name = models.CharField('название', max_length=255)
     price = models.IntegerField('Цена')
     image = models.ImageField(upload_to='media/product/%Y/%m')
     description = models.TextField('Описание')
+    status = models.BooleanField('Отображать', default=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = 'Товары'
         verbose_name_plural = 'Товары'
 
 
-class Order(models.Model):
+class OrderServices(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    status = models.BooleanField(default=True)
+    status = models.BooleanField('Статус', default=True)
     price = models.IntegerField('Цена', default=0)
-    product = models.ManyToManyField(Product, verbose_name='продукты', blank=True, related_name='product')
+    services = models.ManyToManyField(Services, verbose_name='Услуги', blank=True, related_name='services')
+    date = models.DateField('Дата оказания услуг', auto_now_add=True)
+    time_start = models.TimeField('Удобное время оказания услуг с', auto_now_add=True)
+    time_end = models.TimeField('Удобное время оказания услуг по', auto_now_add=True)
 
     def accept_order(self):
         self.status = False
         self.save()
         return self
 
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name = 'Заказы услуг'
+        verbose_name_plural = 'Заказы услуг'
+
+
+class Order(models.Model):
+    user = models.ForeignKey(MyUser,verbose_name='Пользователь', on_delete=models.CASCADE)
+    status = models.BooleanField('Статус', default=True)
+    price = models.IntegerField('Цена', default=0)
+    phone = models.CharField('Контактный телефон', max_length=20, blank=True, default='')
+    data = models.DateTimeField('Дата и время оформления заказа', null=True, blank=True)
+    def accept_order(self, phone):
+        self.status = False
+        self.phone = phone
+        self.save()
+        return self
+
     class Meta:
         verbose_name = 'Заказы'
         verbose_name_plural = 'Заказы'
+
+
+class ProductItem(models.Model):
+    product = models.ForeignKey(Product, verbose_name='Продукты', blank=True, related_name='product', null=True, on_delete=models.SET_NULL)
+    quantity = models.IntegerField('Колличество', default=1)
+    order = models.ForeignKey(Order, verbose_name='Тендер', null=True, related_name='lots', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.product.name
+
+    class Meta:
+        verbose_name = 'Товары'
+        verbose_name_plural = 'Товары'
