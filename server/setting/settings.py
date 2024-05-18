@@ -42,7 +42,7 @@ AUTH_USER_MODEL = 'user.MyUser'
 STATIC_ROOT = 'static'
 STATIC_URLS = 'static/'
 MEDIA_URLS = 'media'
-MEDIA_URL = 'http://127.0.0.1:8000/'
+MEDIA_URL = 'http://89.223.123.175/'
 
 # Application definition
 SIMPLE_JWT = {

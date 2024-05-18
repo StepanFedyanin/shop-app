@@ -24,7 +24,7 @@ from setting import settings
 from user.views import MyTokenObtainPairView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('api/admin/', admin.site.urls),
     path('api/', include_docs_urls(title='API docs')),
     path('api/produce/', include('produce.urls', namespace='produce')),
     path('api/user/', include('user.urls', namespace='user')),

@@ -5,9 +5,8 @@
                 <img src="@/assets/img/logo.png" alt="">
             </div>
             <div class="header__menu">
-                <router-link v-for="item in menuList" class="header__menu--item" :key="item.link" :to="{name:item.link}">
+                <router-link v-for="item in menuList" class="header__menu--item" :class="[item.link==='basket'&&order&&'m--active',item.link==='basket'&&orderServices&&'m--service--active']" :key="item.link" :to="{name:item.link}">
                     {{item.name}}
-					<span v-if="item.link==='basket'" class="count" :class="order&&'m--active'"></span>
                 </router-link>
 				<div v-if="token" class="header__menu--item" @click="exit">Выйти</div>
             </div>
@@ -22,7 +21,8 @@ export default {
         return{
 			token: this.$store.state.access,
 			order: this.$store.state.order,
-			menuAuth:[
+            orderServices: this.$store.state.orderServices,
+            menuAuth:[
 				{name: 'Каталог',link:'home'},
 				{name: 'Корзина',link:'basket'},
 			],
@@ -46,6 +46,12 @@ export default {
 				this.order = this.$store.state.order;
 			}
 		},
+        '$store.state.orderServices': {
+            immediate: true,
+            handler() {
+                this.orderServices = this.$store.state.orderServices;
+            }
+        },
 	},
 	computed:{
 		menuList(){

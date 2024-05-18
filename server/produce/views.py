@@ -7,9 +7,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from produce.serializers import ProductSerializer, OrderSerializer,ProductItemSerializer, ProductItemPostSerializer
-from produce.models import Product, Order, ProductItem
-from produce.schemas import DeleteSchema, PaySchema, ProduceOrderSchema
+from produce.serializers import ProductSerializer, OrderSerializer, ProductItemSerializer, ProductItemPostSerializer, \
+    ServicesSerializer, ServicesSerializer, ServicesPostSerializer, ServicesItemSerializer
+from produce.models import Product, Order, ProductItem, Services, OrderServices
+from produce.schemas import DeleteSchema, PaySchema, ProduceOrderSchema, ServicesAddOrderSchema, PayServicesSchema
 
 
 def calculationTotalPrice(order, data):
@@ -25,11 +26,24 @@ def calculationTotalPrice(order, data):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+def calculationServicesTotalPrice(services, data):
+    total_price = 0
+    for item in data['services']:
+        total_price += item['price']
+    data['price'] = total_price
+    serializer = ServicesSerializer(services, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class ProduceViewSet(GenericViewSet):
     permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
-        queryset = Product.objects.all()
+        queryset = Product.objects.filter(status=True)
         serializer = ProductSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -77,7 +91,7 @@ class OrderViewSet(GenericViewSet):
             'product': request.data['id'],
             'quantity': request.data['quantity'],
             'order': serializerOrder.data['id']
-            }
+        }
         serializer = ProductItemPostSerializer(data=params)
         if serializer.is_valid():
             serializer.save()
@@ -154,6 +168,82 @@ class OrderViewSet(GenericViewSet):
             user = self.request.user
             order = Order.objects.get(user=user, status=True)
             order.accept_order(request.data['phone'])
+            return Response(status=status.HTTP_201_CREATED)
+        except Order.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ServicesViewSet(GenericViewSet):
+    permission_classes = [AllowAny]
+
+    def list(self, request, *args, **kwargs):
+        queryset = Services.objects.filter(status=True)
+        serializer = ServicesItemSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk=None):
+        user = self.request.user
+        queryset = Services.objects.get(pk=pk)
+        data = ServicesItemSerializer(queryset).data
+        already = False
+        services_id = None
+        if user.is_authenticated:
+            services_order = OrderServices.objects.get_or_create(user=user, status=True)[0]
+            serializer = ServicesSerializer(services_order).data
+            for pr in serializer['services']:
+                if pr['id'] == int(pk):
+                    already = True
+                    services_id = pr['id']
+        data['already'] = already
+        data['services_order'] = services_id
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class ServicesOrderViewSet(GenericViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        user = self.request.user
+        services_order = OrderServices.objects.get_or_create(user=user, status=True)[0]
+        serializer = ServicesSerializer(services_order)
+        return calculationServicesTotalPrice(services_order, serializer.data)
+
+    @action(
+        detail=False,
+        methods=['post'],
+        schema=ServicesAddOrderSchema()
+    )
+    def add(self, request):
+        user = self.request.user
+        services = get_object_or_404(Services, pk=request.data['id'])
+        services_order = OrderServices.objects.get_or_create(user=user, status=True)[0]
+        services_order.services.add(services)
+        serializer = ServicesSerializer(services_order)
+        return calculationServicesTotalPrice(services_order, serializer.data)
+
+    @action(
+        detail=False,
+        methods=['post'],
+        schema=ServicesAddOrderSchema()
+    )
+    def remove(self, request):
+        user = self.request.user
+        services = get_object_or_404(Services, pk=request.data['id'])
+        services_order = OrderServices.objects.get_or_create(user=user, status=True)[0]
+        services_order.services.remove(services)
+        serializer = ServicesSerializer(services_order)
+        return calculationServicesTotalPrice(services_order, serializer.data)
+
+    @action(
+        detail=False,
+        methods=['post'],
+        schema=PayServicesSchema()
+    )
+    def pay(self, request):
+        try:
+            user = self.request.user
+            order = OrderServices.objects.get_or_create(user=user, status=True)[0]
+            order.accept_order(request.data['time_start'], request.data['time_end'], request.data['date'], request.data['phone'])
             return Response(status=status.HTTP_201_CREATED)
         except Order.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)

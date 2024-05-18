@@ -23,10 +23,10 @@ class ServicesAdmin(admin.ModelAdmin):
 
 @admin.register(OrderServices)
 class OrderServicesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'price', 'status')
-    list_display_links = ('user', 'price', 'status')
-    list_filter = ('price', 'status',)
-    search_fields = ('price', 'status')
+    list_display = ('user', 'price', 'status', 'phone')
+    list_display_links = ('user', 'price', 'status', 'phone')
+    list_filter = ('status', 'phone',)
+    search_fields = ('price', 'status', 'phone',)
 
 
 class ProductItemInline(admin.TabularInline):

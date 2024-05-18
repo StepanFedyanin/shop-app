@@ -14,7 +14,8 @@ const store = createStore({
         loader: null,
         access: null,
         refresh: null,
-        order: 0
+        order: 0,
+        orderServices: 0
     },
     plugins: [vuexPersist.plugin],
     mutations: {
@@ -27,6 +28,9 @@ const store = createStore({
         },
         ORDER(state, data) {
             state.order = data;
+        },
+        ORDER_SERVICES(state, data) {
+            state.orderServices = data;
         },
     },
     actions: {
@@ -44,6 +48,9 @@ const store = createStore({
         },
         setOrder(context,data) {
             context.commit('ORDER', data);
+        },
+        setOrderServices(context,data) {
+            context.commit('ORDER_SERVICES', data);
         },
     }
 });

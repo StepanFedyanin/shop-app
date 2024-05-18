@@ -16,7 +16,7 @@ html {
 }
 
 body {
-    font-family: cursive,'sans-serif';
+    font-family: monospace,'sans-serif';
     font-size: 1rem;
     line-height: 1.5;
     color: #333333;
@@ -131,6 +131,30 @@ h5, .h5 {
         font-size: 1.5rem;
         display: flex;
         flex-direction: column;
+    }
+    &__tab{
+        position: relative;
+        &:before{
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            top: 8px;
+            right: 8px;
+            transition: all .3s ease;
+        }
+        &.m--active:before {
+            background: var(--bs-primary);
+        }
+        &.m--service--active:before{
+            background: var(--bs-warning);
+        }
     }
 }
 

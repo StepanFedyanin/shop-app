@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from user.models import MyUser
 
@@ -36,18 +38,23 @@ class OrderServices(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     status = models.BooleanField('Статус', default=True)
     price = models.IntegerField('Цена', default=0)
-    services = models.ManyToManyField(Services, verbose_name='Услуги', blank=True, related_name='services')
-    date = models.DateField('Дата оказания услуг', auto_now_add=True)
-    time_start = models.TimeField('Удобное время оказания услуг с', auto_now_add=True)
-    time_end = models.TimeField('Удобное время оказания услуг по', auto_now_add=True)
+    services = models.ManyToManyField(Services, verbose_name='Услуги', blank=True, related_name='services', null=True)
+    date = models.DateField('Дата оказания услуг', null=True)
+    time_start = models.TimeField('Удобное время оказания услуг с', null=True)
+    time_end = models.TimeField('Удобное время оказания услуг по', null=True)
+    phone = models.CharField('Контактный телефон', max_length=20, blank=True, default='')
 
-    def accept_order(self):
+    def accept_order(self, time_start, time_end, date, phone):
         self.status = False
+        self.date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
+        self.time_start = time_start
+        self.time_end = time_end
+        self.phone = phone
         self.save()
         return self
 
     def __str__(self):
-        return self.user
+        return self.user.email
 
     class Meta:
         verbose_name = 'Заказы услуг'
